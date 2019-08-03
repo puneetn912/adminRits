@@ -194,12 +194,12 @@ class SignIn extends Component {
 					>
 						<div className={classes.content}>
 							<div className={classes.contentHeader}>
-								<IconButton
+								{/*<IconButton
 									className={classes.backButton}
 									onClick={this.handleBack}
 								>
 									<ArrowBackIcon />
-								</IconButton>
+								</IconButton>*/}
 							</div>
 							<div className={classes.contentBody}>
 								<form className={classes.form}>
