@@ -123,7 +123,7 @@ class UserList extends Component {
     return (
       <DashboardLayout title="Users">
         <div className={classes.root}>
-          <UsersToolbar selectedUsers={selectedUsers} />
+          {/*<UsersToolbar selectedUsers={selectedUsers} />*/}
           <div className={classes.content}>{this.renderUsers()}</div>
         </div>
       </DashboardLayout>

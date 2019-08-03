@@ -71,7 +71,7 @@ class Dashboard extends Component {
           })}
         >
           {children}
-          <Footer />
+          {/*<Footer />*/}
         </main>
       </Fragment>
     );
