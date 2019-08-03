@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
 
+import axios from 'axios';
+import { apiUrl } from "../../../../config";
+
+
 // Externals
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -88,6 +92,14 @@ class UsersTable extends Component {
   handleChangeRowsPerPage = event => {
     this.setState({ rowsPerPage: event.target.value });
   };
+  toggleUser(user){
+    console.log(user, 'user')
+    this.setState({ isLoading : true })
+      axios.post(`${apiUrl}api/user/update`, {userId : user._id, isApproved:!user.isApproved }).then(res => {
+          this.setState({ isLoading : false })
+          window.location.href = window.location.href
+      }) 
+  }
 
   render() {
     const { classes, className, users } = this.props;
@@ -178,8 +190,8 @@ class UsersTable extends Component {
                       </TableCell>
                       <TableCell className={classes.tableCell}>
                         {user.isApproved ?
-                        <Button color="danger">Reject</Button> :
-                        <Button color="primary">Approve</Button>
+                        <Button color="danger" onClick={() => this.toggleUser(user)}>Reject</Button> :
+                        <Button color="primary" onClick={() => this.toggleUser(user)}>Approve</Button>
                         }
                       </TableCell>
                     </TableRow>
