@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
 
 // Externals
 import classNames from 'classnames';
@@ -101,7 +102,7 @@ class UsersTable extends Component {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell align="left">
+                  {/*<TableCell align="left">
                     <Checkbox
                       checked={selectedUsers.length === users.length}
                       color="primary"
@@ -112,11 +113,11 @@ class UsersTable extends Component {
                       onChange={this.handleSelectAll}
                     />
                     Name
-                  </TableCell>
-                  <TableCell align="left">ID</TableCell>
-                  <TableCell align="left">State</TableCell>
-                  <TableCell align="left">Phone</TableCell>
+                  </TableCell>*/}
+                  <TableCell align="left">Name</TableCell>
+                  <TableCell align="left">Mobile</TableCell>
                   <TableCell align="left">Registration date</TableCell>
+                  <TableCell align="left">Status</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -140,7 +141,7 @@ class UsersTable extends Component {
                       key={user.id}
                       selected={selectedUsers.indexOf(user.id) !== -1}
                     >
-                      <TableCell className={classes.tableCell}>
+                      {/*<TableCell className={classes.tableCell}>
                         <div className={classes.tableCellInner}>
                           <Checkbox
                             checked={selectedUsers.indexOf(user.id) !== -1}
@@ -165,18 +166,21 @@ class UsersTable extends Component {
                             </Typography>
                           </Link>
                         </div>
+                      </TableCell>*/}
+                      <TableCell className={classes.tableCell}>
+                        {user.name}
                       </TableCell>
                       <TableCell className={classes.tableCell}>
-                        {user.id}
-                      </TableCell>
-                      <TableCell className={classes.tableCell}>
-                        {user.address.state}
-                      </TableCell>
-                      <TableCell className={classes.tableCell}>
-                        {user.phone}
+                        {user.mobileno}
                       </TableCell>
                       <TableCell className={classes.tableCell}>
                         {moment(user.createdAt).format('DD/MM/YYYY')}
+                      </TableCell>
+                      <TableCell className={classes.tableCell}>
+                        {user.isApproved ?
+                        <Button color="danger">Reject</Button> :
+                        <Button color="primary">Approve</Button>
+                        }
                       </TableCell>
                     </TableRow>
                   ))}

@@ -17,6 +17,7 @@ import theme from './theme';
 // Styles
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import './assets/scss/index.scss';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Routes
 import Routes from './Routes';

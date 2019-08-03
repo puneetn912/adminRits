@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import axios from 'axios';
+import { apiUrl } from "../../config";
+
 // Externals
 import PropTypes from 'prop-types';
 
@@ -56,9 +59,24 @@ class UserList extends Component {
     }
   }
 
+  getAllUsers(){
+      this.setState({ isLoading : true })
+      axios.post(`${apiUrl}api/getUsers`).then(res => {
+          this.setState({ isLoading : false })
+          console.log(res.data, 'res.data.data');
+          if(res.data.status == 1){
+              this.setState({users : res.data.data})                  
+          }else {
+
+          }
+      })  
+  }
+
+
   componentDidMount() {
     this.signal = true;
-    this.getUsers();
+    // this.getUsers();
+    this.getAllUsers();
   }
 
   componentWillUnmount() {

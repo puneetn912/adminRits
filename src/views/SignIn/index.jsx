@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 
+import axios from 'axios';
+import { apiUrl } from "../../config";
+
 // Externals
 import PropTypes from 'prop-types';
 import compose from 'recompose/compose';
@@ -12,12 +15,12 @@ import { withStyles } from '@material-ui/core';
 
 // Material components
 import {
-  Grid,
-  Button,
-  IconButton,
-  CircularProgress,
-  TextField,
-  Typography
+	Grid,
+	Button,
+	IconButton,
+	CircularProgress,
+	TextField,
+	Typography
 } from '@material-ui/core';
 
 // Material icons
@@ -34,276 +37,301 @@ import schema from './schema';
 
 // Service methods
 const signIn = () => {
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(true);
-    }, 1500);
-  });
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve(true);
+		}, 1500);
+	});
 };
 
 class SignIn extends Component {
-  state = {
-    values: {
-      email: '',
-      password: ''
-    },
-    touched: {
-      email: false,
-      password: false
-    },
-    errors: {
-      email: null,
-      password: null
-    },
-    isValid: false,
-    isLoading: false,
-    submitError: null
-  };
+	state = {
+		values: {
+			email: '',
+			password: ''
+		},
+		touched: {
+			email: false,
+			password: false
+		},
+		errors: {
+			email: null,
+			password: null
+		},
+		isValid: false,
+		isLoading: false,
+		submitError: null,
+		err:""
+	};
 
-  handleBack = () => {
-    const { history } = this.props;
+	componentWillMount(){
+		const { history } = this.props;
+		localStorage.clear();
+		if(localStorage.getItem('isAuthenticated') == 1){
+			// history.push('/dashboard')
+		}
+	}
 
-    history.goBack();
-  };
+	handleBack = () => {
+		const { history } = this.props;
 
-  validateForm = _.debounce(() => {
-    const { values } = this.state;
+		history.goBack();
+	};
 
-    const newState = { ...this.state };
-    const errors = validate(values, schema);
+	validateForm = _.debounce(() => {
+		const { values } = this.state;
 
-    newState.errors = errors || {};
-    newState.isValid = errors ? false : true;
+		const newState = { ...this.state };
+		const errors = validate(values, schema);
 
-    this.setState(newState);
-  }, 300);
+		newState.errors = errors || {};
+		newState.isValid = errors ? false : true;
 
-  handleFieldChange = (field, value) => {
-    const newState = { ...this.state };
+		this.setState(newState);
+	}, 300);
 
-    newState.submitError = null;
-    newState.touched[field] = true;
-    newState.values[field] = value;
+	handleFieldChange = (field, value) => {
+		const newState = { ...this.state };
 
-    this.setState(newState, this.validateForm);
-  };
+		newState.submitError = null;
+		newState.touched[field] = true;
+		newState.values[field] = value;
 
-  handleSignIn = async () => {
-    try {
-      const { history } = this.props;
-      const { values } = this.state;
+		this.setState(newState, this.validateForm);
+	};
 
-      this.setState({ isLoading: true });
+	handleSignIn = async () => {
+		try {
+			const { history } = this.props;
+			const { values } = this.state;
 
-      await signIn(values.email, values.password);
+			this.setState({ isLoading: true });
 
-      localStorage.setItem('isAuthenticated', true);
+			// await signIn(values.email, values.password);
 
-      history.push('/dashboard');
-    } catch (error) {
-      this.setState({
-        isLoading: false,
-        serviceError: error
-      });
-    }
-  };
+			// localStorage.setItem('isAuthenticated', true);
 
-  render() {
-    const { classes } = this.props;
-    const {
-      values,
-      touched,
-      errors,
-      isValid,
-      submitError,
-      isLoading
-    } = this.state;
+			// history.push('/dashboard');
 
-    const showEmailError = touched.email && errors.email;
-    const showPasswordError = touched.password && errors.password;
+			axios.post(`${apiUrl}api/admin/login`, { email: values.email, password:values.password }).then(res => {
+	        	console.log(res.data);
+        		this.setState({ isLoading : false })
+	        	if(res.data.status == 1){
+					localStorage.setItem('adminData', JSON.stringify(res.data.data));
+					localStorage.setItem('isAuthenticated', 1);
+					history.push('/dashboard');		        		
+					this.setState({err : ''})
+	        	}else{
+					this.setState({err : 'Invalid email/password'})
+	        	}
+	     	})	
 
-    return (
-      <div className={classes.root}>
-        <Grid
-          className={classes.grid}
-          container
-        >
-          <Grid
-            className={classes.quoteWrapper}
-            item
-            lg={5}
-          >
-            <div className={classes.quote}>
-              <div className={classes.quoteInner}>
-                <Typography
-                  className={classes.quoteText}
-                  variant="h1"
-                >
-                  Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
-                  they sold out High Life.
-                </Typography>
-                <div className={classes.person}>
-                  <Typography
-                    className={classes.name}
-                    variant="body1"
-                  >
-                    Takamaru Ayako
-                  </Typography>
-                  <Typography
-                    className={classes.bio}
-                    variant="body2"
-                  >
-                    Manager at inVision
-                  </Typography>
-                </div>
-              </div>
-            </div>
-          </Grid>
-          <Grid
-            className={classes.content}
-            item
-            lg={7}
-            xs={12}
-          >
-            <div className={classes.content}>
-              <div className={classes.contentHeader}>
-                <IconButton
-                  className={classes.backButton}
-                  onClick={this.handleBack}
-                >
-                  <ArrowBackIcon />
-                </IconButton>
-              </div>
-              <div className={classes.contentBody}>
-                <form className={classes.form}>
-                  <Typography
-                    className={classes.title}
-                    variant="h2"
-                  >
-                    Sign in
-                  </Typography>
-                  <Typography
-                    className={classes.subtitle}
-                    variant="body1"
-                  >
-                    Sign in with social media
-                  </Typography>
-                  <Button
-                    className={classes.facebookButton}
-                    color="primary"
-                    onClick={this.handleSignIn}
-                    size="large"
-                    variant="contained"
-                  >
-                    <FacebookIcon className={classes.facebookIcon} />
-                    Login with Facebook
-                  </Button>
-                  <Button
-                    className={classes.googleButton}
-                    onClick={this.handleSignIn}
-                    size="large"
-                    variant="contained"
-                  >
-                    <GoogleIcon className={classes.googleIcon} />
-                    Login with Google
-                  </Button>
-                  <Typography
-                    className={classes.sugestion}
-                    variant="body1"
-                  >
-                    or login with email address
-                  </Typography>
-                  <div className={classes.fields}>
-                    <TextField
-                      className={classes.textField}
-                      label="Email address"
-                      name="email"
-                      onChange={event =>
-                        this.handleFieldChange('email', event.target.value)
-                      }
-                      type="text"
-                      value={values.email}
-                      variant="outlined"
-                    />
-                    {showEmailError && (
-                      <Typography
-                        className={classes.fieldError}
-                        variant="body2"
-                      >
-                        {errors.email[0]}
-                      </Typography>
-                    )}
-                    <TextField
-                      className={classes.textField}
-                      label="Password"
-                      name="password"
-                      onChange={event =>
-                        this.handleFieldChange('password', event.target.value)
-                      }
-                      type="password"
-                      value={values.password}
-                      variant="outlined"
-                    />
-                    {showPasswordError && (
-                      <Typography
-                        className={classes.fieldError}
-                        variant="body2"
-                      >
-                        {errors.password[0]}
-                      </Typography>
-                    )}
-                  </div>
-                  {submitError && (
-                    <Typography
-                      className={classes.submitError}
-                      variant="body2"
-                    >
-                      {submitError}
-                    </Typography>
-                  )}
-                  {isLoading ? (
-                    <CircularProgress className={classes.progress} />
-                  ) : (
-                    <Button
-                      className={classes.signInButton}
-                      color="primary"
-                      disabled={!isValid}
-                      onClick={this.handleSignIn}
-                      size="large"
-                      variant="contained"
-                    >
-                      Sign in now
-                    </Button>
-                  )}
-                  <Typography
-                    className={classes.signUp}
-                    variant="body1"
-                  >
-                    Don't have an account?{' '}
-                    <Link
-                      className={classes.signUpUrl}
-                      to="/sign-up"
-                    >
-                      Sign up
-                    </Link>
-                  </Typography>
-                </form>
-              </div>
-            </div>
-          </Grid>
-        </Grid>
-      </div>
-    );
-  }
+
+		} catch (error) {
+			this.setState({
+				isLoading: false,
+				serviceError: error
+			});
+		}
+	};
+
+	render() {
+		const { classes } = this.props;
+		const {
+			values,
+			touched,
+			errors,
+			isValid,
+			submitError,
+			isLoading
+		} = this.state;
+
+		const showEmailError = touched.email && errors.email;
+		const showPasswordError = touched.password && errors.password;
+
+		return (
+			<div className={classes.root}>
+				<Grid
+					className={classes.grid}
+					container
+				>
+					<Grid
+						className={classes.quoteWrapper}
+						item
+						lg={5}
+					>
+						<div className={classes.quote}>
+							<div className={classes.quoteInner}>
+								<Typography
+									className={classes.quoteText}
+									variant="h1"
+								>
+									Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
+									they sold out High Life.
+								</Typography>
+								<div className={classes.person}>
+									<Typography
+										className={classes.name}
+										variant="body1"
+									>
+										Takamaru Ayako
+									</Typography>
+									<Typography
+										className={classes.bio}
+										variant="body2"
+									>
+										Manager at inVision
+									</Typography>
+								</div>
+							</div>
+						</div>
+					</Grid>
+					<Grid
+						className={classes.content}
+						item
+						lg={7}
+						xs={12}
+					>
+						<div className={classes.content}>
+							<div className={classes.contentHeader}>
+								<IconButton
+									className={classes.backButton}
+									onClick={this.handleBack}
+								>
+									<ArrowBackIcon />
+								</IconButton>
+							</div>
+							<div className={classes.contentBody}>
+								<form className={classes.form}>
+									<Typography
+										className={classes.title}
+										variant="h2"
+									>
+										Sign in
+									</Typography>
+									{/*<Typography
+										className={classes.subtitle}
+										variant="body1"
+									>
+										Sign in with social media
+									</Typography>
+									<Button
+										className={classes.facebookButton}
+										color="primary"
+										onClick={this.handleSignIn}
+										size="large"
+										variant="contained"
+									>
+										<FacebookIcon className={classes.facebookIcon} />
+										Login with Facebook
+									</Button>
+									<Button
+										className={classes.googleButton}
+										onClick={this.handleSignIn}
+										size="large"
+										variant="contained"
+									>
+										<GoogleIcon className={classes.googleIcon} />
+										Login with Google
+									</Button>*/}
+									<Typography
+										className={classes.sugestion}
+										variant="body1"
+									>
+										Login with email address
+									</Typography>
+									<div className={classes.fields}>
+										<TextField
+											className={classes.textField}
+											label="Email address"
+											name="email"
+											onChange={event =>
+												this.handleFieldChange('email', event.target.value)
+											}
+											type="text"
+											value={values.email}
+											variant="outlined"
+										/>
+										{showEmailError && (
+											<Typography
+												className={classes.fieldError}
+												variant="body2"
+											>
+												{errors.email[0]}
+											</Typography>
+										)}
+										<TextField
+											className={classes.textField}
+											label="Password"
+											name="password"
+											onChange={event =>
+												this.handleFieldChange('password', event.target.value)
+											}
+											type="password"
+											value={values.password}
+											variant="outlined"
+										/>
+										{showPasswordError && (
+											<Typography
+												className={classes.fieldError}
+												variant="body2"
+											>
+												{errors.password[0]}
+											</Typography>
+										)}
+									</div>
+									{submitError && (
+										<Typography
+											className={classes.submitError}
+											variant="body2"
+										>
+											{submitError}
+										</Typography>
+									)}
+									{isLoading ? (
+										<CircularProgress className={classes.progress} />
+									) : (
+										<Button
+											className={classes.signInButton}
+											color="primary"
+											disabled={!isValid}
+											onClick={this.handleSignIn}
+											size="large"
+											variant="contained"
+										>
+											Sign In
+										</Button>
+									)}
+									<p style={{color:"red", textAlign:"center", padding:20}} >{this.state.err}</p>
+{/*                  <Typography
+										className={classes.signUp}
+										variant="body1"
+									>
+										Don't have an account?{' '}
+										<Link
+											className={classes.signUpUrl}
+											to="/sign-up"
+										>
+											Sign up
+										</Link>
+									</Typography>*/}
+								</form>
+							</div>
+						</div>
+					</Grid>
+				</Grid>
+			</div>
+		);
+	}
 }
 
 SignIn.propTypes = {
-  className: PropTypes.string,
-  classes: PropTypes.object.isRequired,
-  history: PropTypes.object.isRequired
+	className: PropTypes.string,
+	classes: PropTypes.object.isRequired,
+	history: PropTypes.object.isRequired
 };
 
 export default compose(
-  withRouter,
-  withStyles(styles)
+	withRouter,
+	withStyles(styles)
 )(SignIn);

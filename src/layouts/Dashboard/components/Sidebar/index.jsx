@@ -52,7 +52,7 @@ class Sidebar extends Component {
             <img
               alt="Brainalytica logo"
               className={classes.logoImage}
-              src="/images/logos/brainalytica_logo.svg"
+              src="/images/logos/ritsLogo.png"
             />
           </Link>
         </div>
@@ -69,14 +69,14 @@ class Sidebar extends Component {
             className={classes.nameText}
             variant="h6"
           >
-            Roman Kutepov
+            Welcome, Admin
           </Typography>
-          <Typography
+          {/*<Typography
             className={classes.bioText}
             variant="caption"
           >
             Brain Director
-          </Typography>
+          </Typography>*/}
         </div>
         <Divider className={classes.profileDivider} />
         <List
@@ -111,7 +111,7 @@ class Sidebar extends Component {
               primary="Users"
             />
           </ListItem>
-          <ListItem
+          {/*<ListItem
             activeClassName={classes.activeListItem}
             className={classes.listItem}
             component={NavLink}
@@ -180,7 +180,7 @@ class Sidebar extends Component {
               classes={{ primary: classes.listItemText }}
               primary="Account"
             />
-          </ListItem>
+          </ListItem>*/}
           <ListItem
             activeClassName={classes.activeListItem}
             className={classes.listItem}
@@ -197,7 +197,7 @@ class Sidebar extends Component {
           </ListItem>
         </List>
         <Divider className={classes.listDivider} />
-        <List
+        {/*<List
           component="div"
           disablePadding
           subheader={
@@ -220,7 +220,7 @@ class Sidebar extends Component {
               primary="Customer support"
             />
           </ListItem>
-        </List>
+        </List>*/}
       </nav>
     );
   }
