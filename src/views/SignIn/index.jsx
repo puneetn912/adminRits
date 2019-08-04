@@ -166,21 +166,21 @@ class SignIn extends Component {
 									className={classes.quoteText}
 									variant="h1"
 								>
-									Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
-									they sold out High Life.
+									{/*Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
+									they sold out High Life.*/}
 								</Typography>
 								<div className={classes.person}>
 									<Typography
 										className={classes.name}
 										variant="body1"
 									>
-										Takamaru Ayako
+										{/*Takamaru Ayako*/}
 									</Typography>
 									<Typography
 										className={classes.bio}
 										variant="body2"
 									>
-										Manager at inVision
+										{/*Manager at inVision*/}
 									</Typography>
 								</div>
 							</div>
