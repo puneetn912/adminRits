@@ -41,7 +41,8 @@ class UsersTable extends Component {
   state = {
     selectedUsers: [],
     rowsPerPage: 10,
-    page: 0
+    limit: 10,
+    page: 0,
   };
 
   handleSelectAll = event => {
@@ -86,27 +87,48 @@ class UsersTable extends Component {
   };
 
   handleChangePage = (event, page) => {
-    this.setState({ page });
+    let limit = this.state.limit;
+    if (event.currentTarget.getAttribute('aria-label') === 'Next Page') {
+      if (limit + 10 < this.props.users.length) {
+        limit += 10;
+      } else {
+        limit = this.props.users.length;
+      }
+      this.setState({ page: this.state.page + 1, limit });
+    } else {
+      if (limit - 10 > 10) {
+        limit -= 10;
+      } else {
+        limit = 10;
+      }
+      this.setState({ page: this.state.page - 1, limit });
+    }
   };
 
   handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
+    this.setState({ rowsPerPage: event.target.value, limit: event.target.value });
   };
-  toggleUser(user){
-    console.log(user, 'user')
-    this.setState({ isLoading : true })
-      axios.post(`${apiUrl}api/user/update`, {userId : user._id, isApproved:!user.isApproved }).then(res => {
-          this.setState({ isLoading : false })
-          window.location.href = window.location.href
-      }) 
+  toggleUser(user) {
+    this.setState({ isLoading: true })
+    axios.post(`${apiUrl}api/user/update`, { userId: user._id, isApproved: !user.isApproved }).then(res => {
+      this.setState({ isLoading: false })
+      window.location.href = window.location.href
+    })
   }
 
   render() {
     const { classes, className, users } = this.props;
-    const { activeTab, selectedUsers, rowsPerPage, page } = this.state;
-
+    const { activeTab, selectedUsers, rowsPerPage, page, limit } = this.state;
+    let limitValue = [];
+    let val = (users.length - (users.length % 5)) / 5;
+    for (let i = 1; i <= val; i++) {
+      limitValue.push(5 * i);
+    }
+    if (!limitValue.find((val) => { return val === users.length })) {
+      limitValue.push(users.length)
+    }
+    console.log(limitValue);
     const rootClassName = classNames(classes.root, className);
-
     return (
       <Portlet className={rootClassName}>
         <PortletContent noPadding>
@@ -145,7 +167,7 @@ class UsersTable extends Component {
 
                     return user;
                   })
-                  .slice(0, rowsPerPage)
+                  .slice(0, limit)
                   .map(user => (
                     <TableRow
                       className={classes.tableRow}
@@ -190,8 +212,8 @@ class UsersTable extends Component {
                       </TableCell>
                       <TableCell className={classes.tableCell}>
                         {user.isApproved ?
-                        <Button color="danger" onClick={() => this.toggleUser(user)}>Reject</Button> :
-                        <Button color="primary" onClick={() => this.toggleUser(user)}>Approve</Button>
+                          <Button color="danger" onClick={() => this.toggleUser(user)}>Reject</Button> :
+                          <Button color="primary" onClick={() => this.toggleUser(user)}>Approve</Button>
                         }
                       </TableCell>
                     </TableRow>
@@ -212,7 +234,7 @@ class UsersTable extends Component {
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
             page={page}
             rowsPerPage={rowsPerPage}
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={limitValue}
           />
         </PortletContent>
       </Portlet>
@@ -230,8 +252,8 @@ UsersTable.propTypes = {
 
 UsersTable.defaultProps = {
   users: [],
-  onSelect: () => {},
-  onShowDetails: () => {}
+  onSelect: () => { },
+  onShowDetails: () => { }
 };
 
 export default withStyles(styles)(UsersTable);
