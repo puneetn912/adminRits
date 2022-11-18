@@ -43,7 +43,7 @@
     "react-modal": "^3.9.1",
     "react-perfect-scrollbar": "^1.4.4",
     "react-router-dom": "^5.0.0",
-    "react-scripts": "3.0.1",
+    "react-scripts": "5.0.1",
     "reactstrap": "^8.0.1",
     "recompose": "^0.30.0",
     "underscore": "^1.9.1",
